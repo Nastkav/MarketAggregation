@@ -1,0 +1,296 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ogani Template">
+    <meta name="keywords" content="Ogani, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/png" href="~/img/favicon.png" />
+    <title>MyShop | @ViewBag.Title</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!-- Css Styles -->
+    @Styles.Render("~/Content/css")
+    <style>
+        .mix {
+            position: relative !important;
+        }
+
+        .owner-flag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 7;
+            width: 100px;
+        }
+
+        .sale-flag {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            z-index: 7;
+            border-radius: 10px !important;
+            padding: 4px !important;
+            background-color: orangered;
+            color: #fff !important;
+        }
+        .active_prod {
+            border: 1px solid #7fad39;
+        }
+        .latest-product__item {
+            cursor: pointer !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Page Preloder -->
+        <div id="preloder">
+            <div class="loader"></div>
+        </div>
+        <!-- Humberger Begin -->
+        <div class="humberger__menu__overlay"></div>
+        <div class="humberger__menu__wrapper">
+            <div class="humberger__menu__logo">
+                <a href="#"><img src="img/logo.png" alt=""></a>
+            </div>
+            <div class="humberger__menu__cart">
+                <ul>
+                    <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
+                </ul>
+            </div>
+            <div class="humberger__menu__widget">
+                <div class="header__top__right__auth">
+                    <a href="#"><i class="fa fa-user"></i> Увійти</a>
+                </div>
+            </div>
+            <nav class="humberger__menu__nav mobile-menu">
+                <ul>
+                    <li class=""><a href="./index.html">Головна</a></li>
+                </ul>
+            </nav>
+            <div id="mobile-menu-wrap"></div>
+            <div class="header__top__right__social">
+                <a href="#"><i class="fa fa-facebook"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+            </div>
+            <div class="humberger__menu__contact">
+                <ul>
+                    <li><i class="fa fa-envelope"></i> info@myshop.com</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Humberger End -->
+        <!-- Header Section Begin -->
+        <header class="header">
+            <div class="header__top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="header__top__left">
+                                <ul>
+                                    <li><i class="fa fa-envelope"></i> info@myshop.com</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="header__top__right">
+                                <div class="header__top__right__social">
+                                    <a href="/"><i class="fa fa-facebook"></i></a>
+                                    <a href="/"><i class="fa fa-twitter"></i></a>
+                                </div>
+                                <div v-if="!UserInfo.IsAuth" class="header__top__right__auth">
+                                    <i style="display: inline-block !important;vertical-align:middle !important;" class="fa fa-user"></i>
+                                    <a style="display: inline-block !important;vertical-align:middle !important;" v-on:click.prevent="OpenModal('auth')" href="#"> Увійти</a> /
+                                    <a style="display: inline-block !important;vertical-align:middle !important;" v-on:click.prevent="OpenModal('reg')" href="#"> Зареєструватися</a>
+                                </div>
+                                <div v-else class="header__top__right__auth">
+                                    <i style="display: inline-block !important;vertical-align:middle !important;" class="fa fa-user"></i>
+                                    <a style="display: inline-block !important;vertical-align:middle !important;" href="@Url.Action("Index","Myoffice")"> Мій кабінет</a> /
+                                    <a style="display: inline-block !important;vertical-align:middle !important;" v-on:click.prevent="LogOut()" href="#"> Вийти</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="header__logo">
+                            <a href="/"><img src="~/img/logo.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <nav class="header__menu">
+                            <ul>
+                                @if (ViewBag.Title != "Головна")
+                                {
+                                    <li><a href="/">Головна</a></li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3">
+                        <div v-if="UserInfo.IsAuth" class="header__cart">
+                            <ul>
+                                <li><a href="@Url.Action("Index","Myoffice")"><i class="fa fa-heart"></i> <span>{{UserInfo.MyFavorites.length}}</span></a></li>
+                                <!--<li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="humberger__open">
+                    <i class="fa fa-bars"></i>
+                </div>
+            </div>
+        </header>
+        <!-- Header Section End -->
+        @RenderBody()
+        <!-- Footer Section Begin -->
+        <footer class="footer spad">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="footer__about">
+                            <div class="footer__about__logo">
+                                <a href="/"><img src="img/logo.png" alt=""></a>
+                            </div>
+                            <ul>
+                                <li>Email: info@myshop.com</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
+                        <div class="footer__widget">
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="footer__widget">
+                            <h6>Підпишіться на нашу розсилку</h6>
+                            <p>Отримуйте електронною поштою спеціальні пропозиції.</p>
+                            <form action="#">
+                                <input :disabled="loadSub" v-model="subscribe_email" type="text" placeholder="Введіть свою пошту">
+                                <button :disabled="loadSub" v-on:click.prevent="SubscribeSend()" type="submit" class="site-btn">Підпишіться</button>
+                            </form>
+                            <p>{{loadSubMessage}}</p>
+                            <div class="footer__widget__social">
+                                <a href="#"><i class="fa fa-facebook"></i></a>
+                                <a href="#"><i class="fa fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer__copyright">
+                            <div class="footer__copyright__text">
+                                <p>
+                                    Copyright &copy;
+                                    2022 All rights reserved
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Reg Modal -->
+        <div class="modal fade" id="RegModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Реєстрація</h5>
+                        <button :disabled="loadModal" v-on:click="ClearForm('reg')" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon2_1"><i class="fa fa-user" aria-hidden="true"></i></span>
+                            </div>
+                            <input :disabled="loadModal" v-model="AuthObject.Login" type="text" class="form-control" placeholder="Логін" aria-label="Логін" aria-describedby="basic-addon2_1">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon2_2"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            </div>
+                            <input :disabled="loadModal" v-model="AuthObject.Password" type="password" class="form-control" placeholder="Пароль" aria-label="Пароль" aria-describedby="basic-addon2_2">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon2_3"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            </div>
+                            <input :disabled="loadModal" v-model="AuthObject.PasswordRe" type="password" class="form-control" placeholder="Повторіть пароль" aria-label="Повторіть пароль" aria-describedby="basic-addon2_3">
+                        </div>
+                        <p>{{loadModalMessage}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button :disabled="loadModal" v-on:click="ClearForm('reg')" type="button" class="btn btn-secondary" data-dismiss="modal">Приховати</button>
+                        <button :disabled="loadModal" v-on:click.prevent="AuthSend('reg')" type="button" class="btn btn-primary">Зареєструватися</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Auth Modal -->
+        <div class="modal fade" id="AuthModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Авторизація</h5>
+                        <button :disabled="loadModal" v-on:click="ClearForm('auth')" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1_1"><i class="fa fa-user" aria-hidden="true"></i></span>
+                            </div>
+                            <input :disabled="loadModal" v-model="AuthObject.Login" type="text" class="form-control" placeholder="Логін" aria-label="Логін" aria-describedby="basic-addon1_1">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1_2"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            </div>
+                            <input :disabled="loadModal" v-model="AuthObject.Password" type="password" class="form-control" placeholder="Пароль" aria-label="Пароль" aria-describedby="basic-addon1_2">
+                        </div>
+                        <p>{{loadModalMessage}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button :disabled="loadModal" v-on:click="ClearForm('auth')" type="button" class="btn btn-secondary" data-dismiss="modal">Приховати</button>
+                        <button :disabled="loadModal" v-on:click.prevent="AuthSend('auth')" type="button" class="btn btn-primary">Увійти</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="ErrorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Увага!</h5>
+                        <button :disabled="loadModal" v-on:click="ClearFormError()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ErrorMessage}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button :disabled="loadModal" v-on:click="ClearFormError()" type="button" class="btn btn-secondary" data-dismiss="modal">Приховати</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer Section End -->
+    <!-- Js Plugins -->
+    @Scripts.Render("~/bundles/plugins")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

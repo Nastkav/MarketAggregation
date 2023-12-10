@@ -1,0 +1,147 @@
+﻿@using MyShop.Models;
+@{
+    ViewBag.Title = "Товари";
+}
+
+<!-- Hero Section Begin -->
+<section class="hero hero-normal">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        <span>Всі відділи</span>
+                    </div>
+                    <ul>
+                        @foreach (var item in MyShop.Helpers.Extension.comparison)
+                        {
+                            <li><a href="@Url.Action("Index","Products", new { category = item.Key })">@item.Value.Name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form" style="width: 100% !important;">
+                        <form action="#">
+                            <input v-model="search" type="text" placeholder="Що Вам потрібно?">
+                            <button v-on:click.prevent="goSearch()" type="submit" class="site-btn">ПОШУК</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Hero Section End -->
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @if (ViewData["current_category"] is string current_category)
+                    {
+                        <h2>@current_category</h2>
+                    }
+                    else
+                    {
+                        <h2>---</h2>
+                    }
+                    <div class="breadcrumb__option">
+                        <a href="/">На головну</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<!-- Product Section Begin -->
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-5">
+                <div class="sidebar">
+                    <div class="sidebar__item">
+                        <h4>Відділи</h4>
+                        <ul>
+                            @foreach (var item in MyShop.Helpers.Extension.comparison)
+                            {
+                                <li><a href="@Url.Action("Index","Products", new { category = item.Key })">@item.Value.Name</a></li>
+                            }
+                        </ul>
+                    </div>
+                    <div v-show="!loadRecomended" class="sidebar__item">
+                        <h4>Ціна (грн)</h4>
+                        <div class="price-range-wrap">
+                            <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
+                                <div class="ui-slider-range ui-corner-all ui-widget-header"></div>
+                                <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
+                                <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
+                            </div>
+                            <div class="range-slider">
+                                <div class="price-input">
+                                    <input type="text" id="minamount">
+                                    <input type="text" id="maxamount">
+                                </div>
+                            </div>
+                        </div>
+                        <button v-on:click.prevent="goLimit()">Застосувати</button>
+                    </div>
+                </div>
+            </div>
+            <div style="" class="col-lg-9 col-md-7 text-center" v-if="loadRecomended">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-else class="col-lg-9 col-md-7">
+                <div class="filter__item">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="filter__sort">
+                                <span>Сортувати</span>
+                                <select v-model="selectedSort">
+                                    <option value="desc">за зменшенням ціни</option>
+                                    <option value="asc">за збільшенням ціни</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div v-if="CategoryProducts.length > 0" class="filter__found">
+                                <h6>Знайдені продукти: <span>{{CategoryProducts.length}}</span></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div v-for="item in CategoryProducts" class="col-lg-4 col-md-6 col-sm-6">
+                        <div style="position: relative !important;" class="product__item">
+                            <div class="owner-flag">
+                                <img v-if='item.Owner == "atb"' src="~/img/shops/atb_.png" alt="Alternate Text" />
+                                <img v-if='item.Owner == "metro"' src="~/img/shops/metro_.png" alt="Alternate Text" />
+                                <img v-if='item.Owner == "varus"' src="~/img/shops/varus_.png" alt="Alternate Text" />
+                                <img v-if='item.Owner == "silpo"' src="~/img/shops/silpo_.png" alt="Alternate Text" />
+                            </div>
+                            <div v-if='item.Sale != ""' class="sale-flag">{{item.Sale}}</div>
+                            <div v-bind:style="{ backgroundImage: 'url(' + item.ImageUrl + ')' }" class="product__item__pic set-bg" v-bind:data-setbg="item.ImageUrl">
+                                <ul v-bind:style="item.IsFavorites ? 'bottom: 20px !important;' : ''" class="product__item__pic__hover">
+                                    <li><a v-on:click.prevent="AddToFavorite(item)" v-bind:style="item.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' "
+                                           href="#"><i v-bind:style="item.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i></a></li>
+
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6><a v-bind:href="'/Products/Search?search=' + item.Name">{{item.Name}}</a></h6>
+                                <h5 v-if="item.OldPrice != null">Стара ціна: <span style="text-decoration:line-through !important;">{{item.OldPrice}}</span> грн</h5>
+                                <h5>Поточна ціна: {{item.Price}} грн</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Section End -->

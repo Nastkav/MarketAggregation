@@ -1,0 +1,238 @@
+﻿@using MyShop.Models;
+@{
+    ViewBag.Title = "Головна";
+}
+<!-- Hero Section Begin -->
+<section style="padding-bottom: 0px !important;" class="hero hero-normal">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        <span>Всі відділи</span>
+                    </div>
+                    <ul>
+                        @foreach (var item in MyShop.Helpers.Extension.comparison)
+                        {
+                            <li><a href="@Url.Action("Index","Products", new { category = item.Key })">@item.Value.Name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form" style="width: 100% !important;">
+                        <form action="#">
+                            <input v-model="search" type="text" placeholder="Що Вам потрібно?">
+                            <button v-on:click.prevent="goSearch()" type="submit" class="site-btn">ПОШУК</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Hero Section End -->
+<!-- Featured Section Begin -->
+<section style="padding-top: 40px !important;" class="featured spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2>Рекомендовані продукти</h2>
+                </div>
+                <div v-if="!loadRecomended" class="featured__controls">
+                    <ul>
+                        <li class="active" data-filter="*">Всі</li>
+                        <li data-filter=".vegetables">Овочі</li>
+                        <li data-filter=".meat">М'ясо</li>
+                        <li data-filter=".fish">Риба і морепродукти</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row featured__filter">
+            <div style="" class="col-lg-12 col-md-12 col-sm-12 text-center" v-if="loadRecomended">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-if="!loadRecomended" v-for="item in Reccommended.vegetables_all" class="col-lg-3 col-md-4 col-sm-6 mix vegetables">
+                <div class="owner-flag">
+                    <img v-if='item.Owner == "atb"' src="~/img/shops/atb_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "metro"' src="~/img/shops/metro_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "varus"' src="~/img/shops/varus_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "silpo"' src="~/img/shops/silpo_.png" alt="Alternate Text" />
+                </div>
+                <div v-if='item.Sale != ""' class="sale-flag">{{item.Sale}}</div>
+                <div class="featured__item">
+                    <div class="featured__item__pic set-bg" v-bind:data-setbg="item.ImageUrl">
+                        <ul v-bind:style="item.IsFavorites ? 'bottom: 20px !important;' : ''" class="featured__item__pic__hover">
+                            <li><a v-on:click.prevent="AddToFavorite(item)" v-bind:style="item.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                <i v-bind:style="item.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="featured__item__text">
+                        <h6><a v-bind:href="'/Products/Search?search=' + item.Name">{{item.Name}}</a></h6>
+                        <h5 v-if="item.OldPrice != null">Стара ціна: <span style="text-decoration:line-through !important;">{{item.OldPrice}}</span> грн</h5>
+                        <h5>Поточна ціна: {{item.Price}} грн</h5>
+                    </div>
+                </div>
+            </div>
+            <div v-if="!loadRecomended" v-for="item in Reccommended.meats_all" class="col-lg-3 col-md-4 col-sm-6 mix meat">
+                <div class="owner-flag">
+                    <img v-if='item.Owner == "atb"' src="~/img/shops/atb_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "metro"' src="~/img/shops/metro_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "varus"' src="~/img/shops/varus_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "silpo"' src="~/img/shops/silpo_.png" alt="Alternate Text" />
+                </div>
+                <div v-if='item.Sale != ""' class="sale-flag">{{item.Sale}}</div>
+                <div class="featured__item">
+                    <div class="featured__item__pic set-bg" v-bind:data-setbg="item.ImageUrl">
+                        <ul v-bind:style="item.IsFavorites ? 'bottom: 20px !important;' : ''" class="featured__item__pic__hover">
+                            <li><a v-on:click.prevent="AddToFavorite(item)" v-bind:style="item.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                <i v-bind:style="item.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="featured__item__text">
+                        <h6><a v-bind:href="'/Products/Search?search=' + item.Name">{{item.Name}}</a></h6>
+                        <h5 v-if="item.OldPrice != null">Стара ціна: <span style="text-decoration:line-through !important;">{{item.OldPrice}}</span> грн</h5>
+                        <h5>Поточна ціна: {{item.Price}} грн</h5>
+                    </div>
+                </div>
+            </div>
+            <div v-if="!loadRecomended" v-for="item in Reccommended.fish_all" class="col-lg-3 col-md-4 col-sm-6 mix fish">
+                <div class="owner-flag">
+                    <img v-if='item.Owner == "atb"' src="~/img/shops/atb_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "metro"' src="~/img/shops/metro_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "varus"' src="~/img/shops/varus_.png" alt="Alternate Text" />
+                    <img v-if='item.Owner == "silpo"' src="~/img/shops/silpo_.png" alt="Alternate Text" />
+                </div>
+                <div v-if='item.Sale != ""' class="sale-flag">{{item.Sale}}</div>
+                <div class="featured__item">
+                    <div class="featured__item__pic set-bg" v-bind:data-setbg="item.ImageUrl">
+                        <ul v-bind:style="item.IsFavorites ? 'bottom: 20px !important;' : ''" class="featured__item__pic__hover">
+                            <li><a v-on:click.prevent="AddToFavorite(item)" v-bind:style="item.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                <i v-bind:style="item.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="featured__item__text">
+                        <h6><a v-bind:href="'/Products/Search?search=' + item.Name">{{item.Name}}</a></h6>
+                        <h5 v-if="item.OldPrice != null">Стара ціна: <span style="text-decoration:line-through !important;">{{item.OldPrice}}</span> грн</h5>
+                        <h5>Поточна ціна: {{item.Price}} грн</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Featured Section End -->
+<!-- Latest Product Section Begin -->
+<section class="latest-product spad" style="padding-top: 20px !important;margin-bottom: 60px !important;">
+    <div class="container">
+        <div class="row">
+            <div class="section-title text-center" style="margin-left:auto;margin-right:auto;">
+                <h2>Акційні товари</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div style="" class="col-lg-3 col-md-6 text-center" v-if="loadSales">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-else class="col-lg-3 col-md-6">
+                <div class="latest-product__text">
+                    <h4>Варус</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div v-for="item in Sales.Varus_Sale" class="latest-prdouct__slider__item">
+                            <a v-for="item_ in item.arr" v-bind:href="'/Products/Search?search=' + item_.Name" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    <img v-bind:src="item_.ImageUrl" alt="">
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{item_.Name}}</h6>
+                                    <span v-if="item_.Sale != ''">Знижка: {{item_.Sale}}</span>
+                                    <span>{{item_.Price}} грн</span>
+                                    <span v-if="item_.OldPrice != null" style="text-decoration:line-through !important;">{{item_.OldPrice}} грн</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="" class="col-lg-3 col-md-6 text-center" v-if="loadSales">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-else class="col-lg-3 col-md-6">
+                <div class="latest-product__text">
+                    <h4>АТБ</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div v-for="item in Sales.ATB_Sale" class="latest-prdouct__slider__item">
+                            <a v-for="item_ in item.arr" v-bind:href="'/Products/Search?search=' + item_.Name" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    <img v-bind:src="item_.ImageUrl" alt="">
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{item_.Name}}</h6>
+                                    <span v-if="item_.Sale != ''">Знижка: {{item_.Sale}}</span>
+                                    <span>{{item_.Price}} грн</span>
+                                    <span v-if="item_.OldPrice != null" style="text-decoration:line-through !important;">{{item_.OldPrice}} грн</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="" class="col-lg-3 col-md-6 text-center" v-if="loadSales">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-else class="col-lg-3 col-md-6">
+                <div class="latest-product__text">
+                    <h4>Сільпо</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div v-for="item in Sales.Silpo_Sale" class="latest-prdouct__slider__item">
+                            <a v-for="item_ in item.arr" v-bind:href="'/Products/Search?search=' + item_.Name" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    <img v-bind:src="item_.ImageUrl" alt="">
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{item_.Name}}</h6>
+                                    <span v-if="item_.Sale != ''">Знижка: {{item_.Sale}}</span>
+                                    <span>{{item_.Price}} грн</span>
+                                    <span v-if="item_.OldPrice != null" style="text-decoration:line-through !important;">{{item_.OldPrice}} грн</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="" class="col-lg-3 col-md-6 text-center" v-if="loadSales">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-else class="col-lg-3 col-md-6">
+                <div class="latest-product__text">
+                    <h4>Метро</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div v-for="item in Sales.Metro_Sale" class="latest-prdouct__slider__item">
+                            <a v-for="item_ in item.arr" v-bind:href="'/Products/Search?search=' + item_.Name" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    <img v-bind:src="item_.ImageUrl" alt="">
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{item_.Name}}</h6>
+                                    <span v-if="item_.Sale != ''">Знижка: {{item_.Sale}}</span>
+                                    <span>{{item_.Price}} грн</span>
+                                    <span v-if="item_.OldPrice != null" style="text-decoration:line-through !important;">{{item_.OldPrice}} грн</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Latest Product Section End -->

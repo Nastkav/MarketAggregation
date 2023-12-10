@@ -1,0 +1,251 @@
+﻿@{
+    ViewBag.Title = "Про товар";
+}
+<style>
+    .product__details__price2 {
+        font-size: 20px !important;
+        margin-left: 5% !important;
+    }
+
+    .featured__item__pic__hover {
+        position: static !important;
+    }
+
+    .custom-button {
+        margin-left: 5%;
+        vertical-align: middle !important;
+        padding: 10px 10px !important;
+        font-size: 12px !important;
+    }
+</style>
+<!-- Hero Section Begin -->
+<section class="hero hero-normal">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        <span>Всі відділи</span>
+                    </div>
+                    <ul>
+                        @foreach (var item in MyShop.Helpers.Extension.comparison)
+                        {
+                            <li><a href="@Url.Action("Index","Products", new { category = item.Key })">@item.Value.Name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form" style="width: 100% !important;">
+                        <form action="#">
+                            <input v-model="search" type="text" placeholder="Що Вам потрібно?">
+                            <button v-on:click.prevent="goSearch()" type="submit" class="site-btn">ПОШУК</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Hero Section End -->
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Порівняння</h2>
+                    <div class="breadcrumb__option">
+                        <a href="@Url.Action("Index","Home")">На головну</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<!-- Product Details Section Begin -->
+<section class="product-details spad">
+    <div class="container-fluid">
+        <div class="row">
+            <div v-if="ProductsDetailed.varus_products && !loadRecomended" style="position:relative; border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3">
+                <div v-if='ProductsDetailed.varus_products.Sale != ""' style="top:38px !important;" class="sale-flag">{{ProductsDetailed.varus_products.Sale}}</div>
+                <div class="col-lg-12 col-md-12 text-center" style="margin-bottom: 15px;">
+                    <img src="~/img/shops/varus_.png" alt="Alternate Text" />
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="product__details__pic">
+                        <div class="product__details__pic__item">
+                            <img class="product__details__pic__item--large"
+                                 v-bind:src="ProductsDetailed.varus_products.ImageUrl" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="featured__item__pic set-bg" style="height: 70px !important;">
+                        <ul v-bind:style="ProductsDetailed.varus_products.IsFavorites ? 'bottom: 20px !important; position:static !important;' : 'position:static !important;'" class="featured__item__pic__hover">
+                            <li>
+                                <a v-on:click.prevent="AddToFavorite(ProductsDetailed.varus_products)" v-bind:style="ProductsDetailed.varus_products.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                    <i v-bind:style="ProductsDetailed.varus_products.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="product__details__text">
+                        <h3>{{ProductsDetailed.varus_products.Name}}</h3>
+                        <div v-if="ProductsDetailed.varus_products.OldPrice != null" class="product__details__price" style="text-decoration:line-through !important;color:#000 !important;">{{ProductsDetailed.varus_products.OldPrice}} грн</div>
+                        <div class="product__details__price">{{ProductsDetailed.varus_products.Price}} грн</div>
+                        <ul>
+                            <li><b>Доступність</b> <span v-if="ProductsDetailed.varus_products.Availability">В наявності</span><span v-else>Товар відсутній</span></li>
+                            <li><b>Вага / кількість</b> <span>{{ProductsDetailed.varus_products.Amount}}</span></li>
+                            <div>
+                                <div style="margin-top: 20px;display: block;">
+                                    <a v-bind:href="ProductsDetailed.varus_products.OriginalLink" target="_blank" class="primary-btn custom-button">ПЕРЕГЛЯНУТИ</a>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div v-if="loadRecomended" style="border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3 text-center">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Завантаження інформації...
+            </div>
+
+            <div v-if="ProductsDetailed.atb_products && !loadRecomended" style="position:relative; border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3">
+                <div v-if='ProductsDetailed.atb_products.Sale != ""' style="top:38px !important;" class="sale-flag">{{ProductsDetailed.atb_products.Sale}}</div>
+                <div class="col-lg-12 col-md-12 text-center" style="margin-bottom: 15px;">
+                    <img src="~/img/shops/atb_.png" alt="Alternate Text" />
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="product__details__pic">
+                        <div class="product__details__pic__item">
+                            <img class="product__details__pic__item--large"
+                                 v-bind:src="ProductsDetailed.atb_products.ImageUrl" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="featured__item__pic set-bg" style="height: 70px !important;">
+                        <ul v-bind:style="ProductsDetailed.atb_products.IsFavorites ? 'bottom: 20px !important; position:static !important;' : 'position:static !important;'" class="featured__item__pic__hover">
+                            <li>
+                                <a v-on:click.prevent="AddToFavorite(ProductsDetailed.atb_products)" v-bind:style="ProductsDetailed.atb_products.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                    <i v-bind:style="ProductsDetailed.atb_products.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="product__details__text">
+                        <h3>{{ProductsDetailed.atb_products.Name}}</h3>
+                        <div v-if="ProductsDetailed.atb_products.OldPrice != null" class="product__details__price" style="text-decoration:line-through !important;color:#000 !important;">{{ProductsDetailed.atb_products.OldPrice}} грн</div>
+                        <div class="product__details__price">{{ProductsDetailed.atb_products.Price}} грн</div>
+                        <ul>
+                            <li><b>Доступність</b> <span v-if="ProductsDetailed.atb_products.Availability">В наявності</span><span v-else>Товар відсутній</span></li>
+                            <li><b>Вага / кількість</b> <span>{{ProductsDetailed.atb_products.Amount}}</span></li>
+                            <div>
+                                <div style="margin-top: 20px;display: block;">
+                                    <a v-bind:href="ProductsDetailed.atb_products.OriginalLink" target="_blank" class="primary-btn custom-button">ПЕРЕГЛЯНУТИ</a>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div v-if="loadRecomended" style="border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3 text-center">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Завантаження інформації...
+            </div>
+
+            <div v-if="ProductsDetailed.silpo_products && !loadRecomended" style="position:relative; border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3">
+                <div v-if='ProductsDetailed.silpo_products.Sale != ""' style="top:38px !important;" class="sale-flag">{{ProductsDetailed.silpo_products.Sale}}</div>
+                <div class="col-lg-12 col-md-12 text-center" style="margin-bottom: 15px;">
+                    <img src="~/img/shops/silpo_.png" alt="Alternate Text" />
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="product__details__pic">
+                        <div class="product__details__pic__item">
+                            <img class="product__details__pic__item--large"
+                                 v-bind:src="ProductsDetailed.silpo_products.ImageUrl" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="featured__item__pic set-bg" style="height: 70px !important;">
+                        <ul v-bind:style="ProductsDetailed.silpo_products.IsFavorites ? 'bottom: 20px !important; position:static !important;' : 'position:static !important;'" class="featured__item__pic__hover">
+                            <li>
+                                <a v-on:click.prevent="AddToFavorite(ProductsDetailed.silpo_products)" v-bind:style="ProductsDetailed.silpo_products.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                    <i v-bind:style="ProductsDetailed.silpo_products.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="product__details__text">
+                        <h3>{{ProductsDetailed.silpo_products.Name}}</h3>
+                        <div v-if="ProductsDetailed.silpo_products.OldPrice != null" class="product__details__price" style="text-decoration:line-through !important;color:#000 !important;">{{ProductsDetailed.silpo_products.OldPrice}} грн</div>
+                        <div class="product__details__price">{{ProductsDetailed.silpo_products.Price}} грн</div>
+                        <ul>
+                            <li><b>Доступність</b> <span v-if="ProductsDetailed.silpo_products.Availability">В наявності</span><span v-else>Товар відсутній</span></li>
+                            <li><b>Вага / кількість</b> <span>{{ProductsDetailed.silpo_products.Amount}}</span></li>
+                            <div>
+                                <div style="margin-top: 20px;display: block;">
+                                    <a v-bind:href="ProductsDetailed.silpo_products.OriginalLink" target="_blank" class="primary-btn custom-button">ПЕРЕГЛЯНУТИ</a>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div v-if="loadRecomended" style="border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3 text-center">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Завантаження інформації...
+            </div>
+
+            <div v-if="ProductsDetailed.metro_products && !loadRecomended" style="position:relative;border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3">
+                <div v-if='ProductsDetailed.metro_products.Sale != ""' style="top:38px !important;" class="sale-flag">{{ProductsDetailed.metro_products.Sale}}</div>
+                <div class="col-lg-12 col-md-12 text-center" style="margin-bottom: 15px;">
+                    <img src="~/img/shops/metro_.png" alt="Alternate Text" />
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="product__details__pic">
+                        <div class="product__details__pic__item">
+                            <img class="product__details__pic__item--large"
+                                 v-bind:src="ProductsDetailed.metro_products.ImageUrl" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="featured__item__pic set-bg" style="height: 70px !important;">
+                        <ul v-bind:style="ProductsDetailed.metro_products.IsFavorites ? 'bottom: 20px !important; position:static !important;' : 'position:static !important;'" class="featured__item__pic__hover">
+                            <li>
+                                <a v-on:click.prevent="AddToFavorite(ProductsDetailed.metro_products)" v-bind:style="ProductsDetailed.metro_products.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                    <i v-bind:style="ProductsDetailed.metro_products.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="product__details__text">
+                        <h3>{{ProductsDetailed.metro_products.Name}}</h3>
+                        <div v-if="ProductsDetailed.metro_products.OldPrice != null" class="product__details__price" style="text-decoration:line-through !important;color:#000 !important;">{{ProductsDetailed.metro_products.OldPrice}} грн</div>
+                        <div class="product__details__price">{{ProductsDetailed.metro_products.Price}} грн</div>
+                        <ul>
+                            <li><b>Доступність</b> <span v-if="ProductsDetailed.metro_products.Availability">В наявності</span><span v-else>Товар відсутній</span></li>
+                            <li><b>Вага / кількість</b> <span>{{ProductsDetailed.metro_products.Amount}}</span></li>
+                            <div>
+                                <div style="margin-top: 20px;display: block;">
+                                    <a v-bind:href="ProductsDetailed.metro_products.OriginalLink" target="_blank" class="primary-btn custom-button">ПЕРЕГЛЯНУТИ</a>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div v-if="loadRecomended" style="border-right: 1px solid gray" class="col-lg-3 col-md-3 col-sm-3 text-center">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Завантаження інформації...
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Details Section End -->

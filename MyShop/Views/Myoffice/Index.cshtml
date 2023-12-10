@@ -1,0 +1,94 @@
+﻿@using MyShop.Models;
+@{
+    ViewBag.Title = "Мій кабінет";
+}
+
+<!-- Hero Section Begin -->
+<section class="hero hero-normal">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        <span>Всі відділи</span>
+                    </div>
+                    <ul>
+                        @foreach (var item in MyShop.Helpers.Extension.comparison)
+                        {
+                            <li><a href="@Url.Action("Index","Products", new { category = item.Key })">@item.Value.Name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form" style="width: 100% !important;">
+                        <form action="#">
+                            <input v-model="search" type="text" placeholder="Що Вам потрібно?">
+                            <button v-on:click.prevent="goSearch()" type="submit" class="site-btn">ПОШУК</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Hero Section End -->
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Мій кабінет</h2>
+                    <div class="breadcrumb__option">
+                        <a href="/">На головну</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<!-- Product Section Begin -->
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div style="" class="col-lg-12 col-md-12 text-center" v-if="loadRecomended">
+                <img style="width: 50px !important; display: block; margin: 0 auto; margin-bottom: 20px !important;" src="~/img/preload.gif" alt="Alternate Text" />
+                Зачекайте... Завантажую інформацію!
+            </div>
+            <div v-if="!loadRecomended && MyFavorites.length > 0" class="col-lg-12 col-md-12">
+                <div class="row">
+                    <div v-for="item in MyFavorites" class="col-lg-3 col-md-3 col-sm-3">
+                        <div style="position: relative !important;" class="product__item">
+                            <div class="owner-flag">
+                                <img v-if='item.Owner == "atb"' src="~/img/shops/atb_.png" alt="Alternate Text" />
+                                <img v-if='item.Owner == "metro"' src="~/img/shops/metro_.png" alt="Alternate Text" />
+                                <img v-if='item.Owner == "varus"' src="~/img/shops/varus_.png" alt="Alternate Text" />
+                                <img v-if='item.Owner == "silpo"' src="~/img/shops/silpo_.png" alt="Alternate Text" />
+                            </div>
+                            <div v-if='item.Sale != ""' class="sale-flag">{{item.Sale}}</div>
+                            <div v-bind:style="{ backgroundImage: 'url(' + item.ImageUrl + ')' }" class="product__item__pic set-bg" v-bind:data-setbg="item.ImageUrl">
+                                <ul v-bind:style="item.IsFavorites ? 'bottom: 20px !important;' : ''" class="product__item__pic__hover">
+                                    <li><a v-on:click.prevent="AddToFavorite(item)" v-bind:style="item.IsFavorites ? 'background: #7fad39 !important;border-color: #7fad39 !important;' : '' " href="#">
+                                        <i v-bind:style="item.IsFavorites ? 'color: #fff !important;' : '' " class="fa fa-heart"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6><a v-bind:href="item.OriginalLink">{{item.Name}}</a></h6>
+                                <h5 v-if="item.OldPrice != null">Стара ціна: <span style="text-decoration:line-through !important;">{{item.OldPrice}}</span> грн</h5>
+                                <h5>Поточна ціна: {{item.Price}} грн</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="!loadRecomended && MyFavorites.length < 1" class="col-lg-12 col-md-12 text-center">
+                У вас немає вибраних товарів!
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Section End -->
